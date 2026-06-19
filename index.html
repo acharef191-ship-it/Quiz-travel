@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سلطاني ترافل | وين رايح هاذ الصيف؟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Cairo:wght@300;400;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal-deep:#063b3d;
+    --teal:#0c7a7e;
+    --teal-bright:#13a3a8;
+    --gold:#cda15a;
+    --gold-light:#e8cd99;
+    --cream:#f5efe2;
+    --ink:#06211f;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{
+    min-height:100vh;
+    background: radial-gradient(circle at 20% 10%, #0e8b8f 0%, var(--teal-deep) 55%, var(--ink) 100%);
+    font-family:'Cairo', sans-serif;
+    color:var(--cream);
+    overflow-x:hidden;
+  }
+  body{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px 16px;
+    position:relative;
+  }
+ 
+  /* Zellige-inspired ambient pattern */
+  .pattern-layer{
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(45deg, rgba(255,255,255,0.035) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.035) 75%),
+      linear-gradient(45deg, rgba(255,255,255,0.035) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.035) 75%);
+    background-size: 56px 56px;
+    background-position: 0 0, 28px 28px;
+    opacity:.5;
+    pointer-events:none;
+    z-index:0;
+  }
+  .glow{
+    position:fixed; width:560px; height:560px; border-radius:50%;
+    background:radial-gradient(circle, rgba(205,161,90,0.25), transparent 70%);
+    top:-180px; left:-180px; z-index:0; filter:blur(10px);
+    animation:float 14s ease-in-out infinite;
+  }
+  .glow.two{
+    top:auto; bottom:-220px; left:auto; right:-200px;
+    background:radial-gradient(circle, rgba(19,163,168,0.35), transparent 70%);
+    animation-delay:3s;
+  }
+  @keyframes float{
+    0%,100%{ transform:translate(0,0); }
+    50%{ transform:translate(30px,-20px); }
+  }
+ 
+  .stage{
+    position:relative; z-index:2;
+    width:100%; max-width:560px;
+  }
+ 
+  /* Octagonal frame echoing the logo motif */
+  .frame{
+    position:relative;
+    background:linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    border:1px solid rgba(232,205,153,0.35);
+    backdrop-filter:blur(18px);
+    border-radius:28px;
+    padding:38px 32px 30px;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset;
+    clip-path: polygon(8% 0, 92% 0, 100% 10%, 100% 90%, 92% 100%, 8% 100%, 0 90%, 0 10%);
+  }
+  .frame::before{
+    content:"";
+    position:absolute; inset:10px;
+    border:1px solid rgba(232,205,153,0.18);
+    border-radius:20px;
+    pointer-events:none;
+    clip-path: polygon(8% 0, 92% 0, 100% 10%, 100% 90%, 92% 100%, 8% 100%, 0 90%, 0 10%);
+  }
+ 
+  .brandbar{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    margin-bottom:18px;
+  }
+  .brandbar .line{ flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent);}
+  .brandbar span{
+    font-family:'Marcellus', serif;
+    letter-spacing:3px;
+    font-size:12px;
+    color:var(--gold-light);
+    white-space:nowrap;
+  }
+ 
+  h1.title{
+    font-family:'Tajawal', sans-serif;
+    font-weight:900;
+    font-size:clamp(24px,5vw,32px);
+    text-align:center;
+    line-height:1.5;
+    color:#fff;
+    margin-bottom:6px;
+    text-shadow:0 2px 18px rgba(0,0,0,0.35);
+  }
+  p.subtitle{
+    text-align:center;
+    font-size:14.5px;
+    color:rgba(245,239,226,0.78);
+    margin-bottom:26px;
+    line-height:1.9;
+  }
+ 
+  /* progress */
+  .progress-wrap{
+    display:flex; align-items:center; gap:8px; justify-content:center;
+    margin-bottom:26px;
+  }
+  .dot{
+    width:9px; height:9px; border-radius:50%;
+    background:rgba(255,255,255,0.18);
+    transition:all .35s ease;
+  }
+  .dot.done{ background:var(--gold); box-shadow:0 0 10px rgba(205,161,90,0.7); }
+  .dot.active{ background:var(--teal-bright); width:22px; border-radius:6px; box-shadow:0 0 12px rgba(19,163,168,0.8); }
+ 
+  .card-zone{ position:relative; min-height:330px; }
+ 
+  .q-screen{
+    position:absolute; inset:0;
+    opacity:0; transform:translateX(24px);
+    pointer-events:none;
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .q-screen.active{
+    position:relative;
+    opacity:1; transform:translateX(0);
+    pointer-events:auto;
+  }
+  .q-screen.leaving{
+    opacity:0; transform:translateX(-24px);
+  }
+ 
+  .q-eyebrow{
+    font-size:12px; color:var(--gold-light); letter-spacing:1px;
+    margin-bottom:8px; font-weight:600;
+  }
+  .q-text{
+    font-family:'Tajawal', sans-serif;
+    font-weight:700;
+    font-size:clamp(18px,4vw,21px);
+    color:#fff;
+    margin-bottom:20px;
+    line-height:1.6;
+  }
+ 
+  .options{ display:flex; flex-direction:column; gap:12px; }
+  .opt{
+    display:flex; align-items:center; gap:14px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:14px;
+    padding:14px 16px;
+    cursor:pointer;
+    text-align:right;
+    font-family:'Cairo', sans-serif;
+    font-size:15px;
+    color:var(--cream);
+    transition:all .25s ease;
+  }
+  .opt:hover{
+    background:rgba(205,161,90,0.14);
+    border-color:var(--gold);
+    transform:translateX(-4px);
+  }
+  .opt .emoji{ font-size:20px; flex-shrink:0; }
+ 
+  /* result screen */
+  .result{
+    text-align:center;
+    display:none;
+  }
+  .result.show{ display:block; animation:reveal .6s ease; }
+  @keyframes reveal{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+ 
+  .result .badge{
+    font-size:12px; color:var(--gold-light); letter-spacing:2px; margin-bottom:10px;
+  }
+  .result .place{
+    font-family:'Tajawal', sans-serif;
+    font-weight:900;
+    font-size:clamp(30px,7vw,42px);
+    color:#fff;
+    margin-bottom:6px;
+    background:linear-gradient(90deg, var(--gold-light), #fff, var(--gold-light));
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .result .tag{
+    font-size:14px; color:var(--gold-light); margin-bottom:18px; font-weight:600;
+  }
+  .result .desc{
+    font-size:14.5px; line-height:2; color:rgba(245,239,226,0.88);
+    margin-bottom:22px; padding:0 4px;
+  }
+  .result .divider{
+    width:60px; height:2px; background:var(--gold); margin:18px auto; border-radius:2px;
+  }
+  .actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .btn{
+    border:none; cursor:pointer; font-family:'Cairo'; font-weight:700; font-size:14.5px;
+    padding:13px 22px; border-radius:12px; transition:all .25s ease;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg, var(--gold), var(--gold-light));
+    color:var(--teal-deep);
+    box-shadow:0 10px 25px -8px rgba(205,161,90,0.6);
+  }
+  .btn-primary:hover{ transform:translateY(-2px); }
+  .btn-ghost{
+    background:transparent; color:var(--cream); border:1px solid rgba(255,255,255,0.25);
+  }
+  .btn-ghost:hover{ border-color:var(--gold); color:var(--gold-light); }
+ 
+  footer.note{
+    text-align:center; margin-top:22px; font-size:11.5px; color:rgba(245,239,226,0.45);
+    letter-spacing:.5px;
+  }
+ 
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+ 
+<div class="pattern-layer"></div>
+<div class="glow"></div>
+<div class="glow two"></div>
+ 
+<div class="stage">
+  <div class="frame">
+ 
+    <div class="brandbar">
+      <span class="line" style="display:none"></span>
+      <div class="line"></div>
+      <span>SOLTANI TRAVEL</span>
+      <div class="line"></div>
+    </div>
+ 
+    <h1 class="title">وين رايح هاذ الصيف؟ 🌊</h1>
+    <p class="subtitle">جاوب على 5 أسئلة بسيطة، وحنا نقولولك وين الوجهة المثالية ليك من بين أجمل بلايص الساحل الشرقي</p>
+ 
+    <div class="progress-wrap" id="progress"></div>
+ 
+    <div class="card-zone" id="cardZone">
+      <!-- questions injected by JS -->
+    </div>
+ 
+    <div class="result" id="result">
+      <div class="badge">✦ الوجهة المثالية ليك ✦</div>
+      <div class="place" id="resPlace"></div>
+      <div class="tag" id="resTag"></div>
+      <div class="divider"></div>
+      <p class="desc" id="resDesc"></p>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="restart()">جرّب مرة أخرى</button>
+      </div>
+    </div>
+ 
+    <footer class="note">SOLTANI TRAVEL — اكتشف الجزائر بطريقتك</footer>
+  </div>
+</div>
+ 
+<script>
+const questions = [
+  {
+    q: "كي تخطط لرحلة، أول حاجة تفكر فيها هي؟",
+    eyebrow: "السؤال 1 من 5",
+    options: [
+      { txt: "البحر و الشطّ و الهواء النقي", emoji:"🌊", scores:{skikda:2, jijel:2} },
+      { txt: "التاريخ و الآثار العتيقة", emoji:"🏛️", scores:{constantine:3} },
+      { txt: "الحركة و السهرات و الناس", emoji:"🎉", scores:{annaba:2, bejaia:1} },
+      { txt: "الهدوء و الطبيعة البعيدة عن الزحمة", emoji:"🌲", scores:{jijel:2, tipaza:1} },
+    ]
+  },
+  {
+    q: "مع من غادي تكون الرحلة؟",
+    eyebrow: "السؤال 2 من 5",
+    options: [
+      { txt: "مع العائلة و الصغار", emoji:"👨‍👩‍👧‍👦", scores:{skikda:2, tipaza:2} },
+      { txt: "مع الأصحاب", emoji:"🧑‍🤝‍🧑", scores:{annaba:2, bejaia:2} },
+      { txt: "رحلة رومنسية ثنائية", emoji:"💞", scores:{jijel:2, tipaza:2} },
+      { txt: "وحدي، باش نكتشف و نرتاح", emoji:"🎒", scores:{constantine:2, bejaia:1} },
+    ]
+  },
+  {
+    q: "شنو الصورة التي تحبها لمكان العطلة؟",
+    eyebrow: "السؤال 3 من 5",
+    options: [
+      { txt: "كهوف و جبال خضراء فوق البحر", emoji:"⛰️", scores:{jijel:3} },
+      { txt: "مدينة عتيقة معلقة بين الوديان", emoji:"🕌", scores:{constantine:3} },
+      { txt: "شطوط رملية طويلة و أجواء عائلية", emoji:"🏖️", scores:{skikda:3} },
+      { txt: "ميناء، أسواق، و حياة ليلية", emoji:"⚓", scores:{annaba:2, bejaia:2} },
+    ]
+  },
+  {
+    q: "وقت الأكل، واش تحب تجرب؟",
+    eyebrow: "السؤال 4 من 5",
+    options: [
+      { txt: "مأكولات بحرية طرية، طازة من المركب", emoji:"🐟", scores:{jijel:2, bejaia:2} },
+      { txt: "مطاعم على الشط مع العائلة", emoji:"🍤", scores:{skikda:2, annaba:1} },
+      { txt: "حلويات و قهوة في مقهى عتيق", emoji:"☕", scores:{constantine:3} },
+      { txt: "أكل في الهواء الطلق وسط الطبيعة", emoji:"🍲", scores:{tipaza:2, jijel:1} },
+    ]
+  },
+  {
+    q: "آخر سؤال... شنو يهمك أكثر في الرحلة؟",
+    eyebrow: "السؤال 5 من 5",
+    options: [
+      { txt: "الراحة و السكون", emoji:"🧘", scores:{tipaza:2, jijel:1} },
+      { txt: "صور تستاهل النشر", emoji:"📸", scores:{jijel:2, constantine:1} },
+      { txt: "أجواء حية و ناس كثير", emoji:"🎶", scores:{annaba:2, bejaia:1} },
+      { txt: "بساطة و راحة العائلة", emoji:"🧺", scores:{skikda:2} },
+    ]
+  },
+];
+ 
+const destinations = {
+  skikda: {
+    name: "سكيكدة",
+    tag: "للي يحب الشط و العائلة و البساطة",
+    desc: "شطوط رملية طويلة، أجواء عائلية هادية، و مدينة ساحلية بسيطة تخليك ترتاح بلا تعقيد. سكيكدة هي الوجهة المثالية لعطلة عائلية مليانة بحر و شمس."
+  },
+  jijel: {
+    name: "جيجل",
+    tag: "للي يحب الطبيعة و الهدوء و الرومنسية",
+    desc: "جبال خضراء تنزل مباشرة للبحر، كهوف و شواطئ مخفية، و هدوء ما يعوضوش. جيجل تصلح برشا للرحلات الرومنسية أو لمن يبحث عن الطبيعة البكر."
+  },
+  annaba: {
+    name: "عنابة",
+    tag: "للي يحب الحركة و السهرات مع الأصحاب",
+    desc: "مدينة حية بميناءها و أسواقها و حياتها الليلية، فيها مزيج بين البحر و التاريخ الروماني. عنابة وجهة مليحة للي يحب يخرج، يتفرج، و يقعد مع الأصحاب."
+  },
+  bejaia: {
+    name: "بجاية",
+    tag: "بين البحر و الجبل في نفس الوقت",
+    desc: "بجاية تجمع بين شطوط رائعة و جبال كبيرة قريبة، مع مدينة فيها حياة و مأكولات بحرية لذيذة. وجهة متكاملة لمن يحب يخلط بين الاسترخاء و الاكتشاف."
+  },
+  constantine: {
+    name: "قسنطينة",
+    tag: "للي يحب التاريخ و الجو العتيق",
+    desc: "مدينة الجسور المعلقة، وديان عميقة، و عمارة عتيقة تحكي قرون من التاريخ. قسنطينة تصلح لمن يبحث عن تجربة ثقافية مختلفة بعيدة عن الشط."
+  },
+  tipaza: {
+    name: "تيبازة",
+    tag: "للي يحب الهدوء و الآثار وسط الطبيعة",
+    desc: "آثار رومانية فوق البحر مباشرة، أجواء هادية و خضرة جميلة. تيبازة مناسبة لرحلة عائلية أو ثنائية هادية مع لمسة تاريخية."
+  }
+};
+ 
+let current = 0;
+const tally = {};
+const cardZone = document.getElementById('cardZone');
+const progress = document.getElementById('progress');
+const resultEl = document.getElementById('result');
+ 
+function buildProgress(){
+  progress.innerHTML = '';
+  questions.forEach((_, i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0 ? ' active' : '');
+    d.id = 'dot-'+i;
+    progress.appendChild(d);
+  });
+}
+ 
+function renderQuestion(idx){
+  const data = questions[idx];
+  const screen = document.createElement('div');
+  screen.className = 'q-screen active';
+  screen.id = 'screen-'+idx;
+ 
+  const eyebrow = document.createElement('div');
+  eyebrow.className = 'q-eyebrow';
+  eyebrow.textContent = data.eyebrow;
+ 
+  const qtext = document.createElement('div');
+  qtext.className = 'q-text';
+  qtext.textContent = data.q;
+ 
+  const opts = document.createElement('div');
+  opts.className = 'options';
+ 
+  data.options.forEach(o=>{
+    const btn = document.createElement('div');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="emoji">${o.emoji}</span><span>${o.txt}</span>`;
+    btn.onclick = ()=> selectOption(o, idx);
+    opts.appendChild(btn);
+  });
+ 
+  screen.appendChild(eyebrow);
+  screen.appendChild(qtext);
+  screen.appendChild(opts);
+  cardZone.appendChild(screen);
+}
+ 
+function selectOption(option, idx){
+  Object.entries(option.scores).forEach(([key, val])=>{
+    tally[key] = (tally[key]||0) + val;
+  });
+ 
+  const currentScreen = document.getElementById('screen-'+idx);
+  currentScreen.classList.add('leaving');
+  currentScreen.classList.remove('active');
+ 
+  document.getElementById('dot-'+idx).classList.remove('active');
+  document.getElementById('dot-'+idx).classList.add('done');
+ 
+  setTimeout(()=>{
+    currentScreen.remove();
+    current++;
+    if(current < questions.length){
+      renderQuestion(current);
+      const next = document.getElementById('dot-'+current);
+      if(next) next.classList.add('active');
+    } else {
+      showResult();
+    }
+  }, 380);
+}
+ 
+function showResult(){
+  cardZone.style.display = 'none';
+  progress.style.display = 'none';
+ 
+  let bestKey = null, bestVal = -1;
+  Object.entries(tally).forEach(([k,v])=>{
+    if(v > bestVal){ bestVal = v; bestKey = k; }
+  });
+  const dest = destinations[bestKey] || destinations.skikda;
+ 
+  document.getElementById('resPlace').textContent = dest.name;
+  document.getElementById('resTag').textContent = dest.tag;
+  document.getElementById('resDesc').textContent = dest.desc;
+ 
+  resultEl.classList.add('show');
+}
+ 
+function restart(){
+  for(const k in tally) delete tally[k];
+  current = 0;
+  cardZone.innerHTML = '';
+  cardZone.style.display = 'block';
+  progress.style.display = 'flex';
+  resultEl.classList.remove('show');
+  buildProgress();
+  renderQuestion(0);
+}
+ 
+buildProgress();
+renderQuestion(0);
+</script>
+ 
+</body>
+</html>
